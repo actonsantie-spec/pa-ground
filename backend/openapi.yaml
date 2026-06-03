@@ -1,0 +1,48 @@
+openapi: 3.1.0
+info:
+  title: PA Ground API
+  version: 0.1.0
+  description: OpenAPI 3.1 spec skeleton for PA Ground backend
+servers:
+  - url: http://localhost:4000
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+  /api/admin/stats:
+    get:
+      summary: Get admin statistics
+      parameters:
+        - in: query
+          name: range
+          schema:
+            type: string
+            enum: [7days, 30days, 90days, yearly]
+      responses:
+        '200':
+          description: Stats object
+  /api/orders/{orderId}/track:
+    get:
+      summary: Get tracking checkpoints for an order
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tracking data
+
+components:
+  schemas:
+    Health:
+      type: object
+      properties:
+        status:
+          type: string
+        env:
+          type: string
