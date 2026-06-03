@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, TrendingUp, Package, MessageSquare, AlertCircle } from 'lucide-react';
+import { TrendingUp, Package, MessageSquare, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../../api/apiClient';
 import { fetchProducts } from '../../api/products';
@@ -10,7 +10,7 @@ const SellerDashboard = () => {
   const [productStats, setProductStats] = useState({ totalProducts: 0, activeProducts: 0, outOfStock: 0 });
   const [orderStats, setOrderStats] = useState({ recentOrders: [], totalOrders: 0, pendingOrders: 0 });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,7 +42,6 @@ const SellerDashboard = () => {
         });
       } catch (err) {
         console.error(err);
-        setError(err.message || 'Failed to load seller dashboard data');
       } finally {
         setLoading(false);
       }
@@ -53,7 +52,9 @@ const SellerDashboard = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-8 text-center text-gray-600">Loading seller dashboard...</div>
+      <div className="bg-white rounded-lg shadow-md p-8 text-center text-gray-600">
+        Loading seller dashboard...
+      </div>
     );
   }
 
@@ -106,7 +107,9 @@ const SellerDashboard = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Seller Dashboard</h1>
-          <p className="text-gray-600 mt-1">Welcome back, {currentUser.name || currentUser.email}.</p>
+          <p className="text-gray-600 mt-1">
+            Welcome back, {currentUser.name || currentUser.email}.
+          </p>
         </div>
 
         <div className="flex gap-3 flex-wrap">
@@ -145,7 +148,9 @@ const SellerDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Seller Profile</h2>
-          <p className="text-gray-700 font-semibold">{currentUser.seller?.businessName || 'Business name unavailable'}</p>
+          <p className="text-gray-700 font-semibold">
+            {currentUser.seller?.businessName || 'Business name unavailable'}
+          </p>
           <p className="text-gray-600 mt-2">Owner: {currentUser.name}</p>
           <p className="text-gray-600">Email: {currentUser.email}</p>
           {currentUser.phone && <p className="text-gray-600">Phone: {currentUser.phone}</p>}
@@ -179,9 +184,13 @@ const SellerDashboard = () => {
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Amount</p>
-                      <p className="font-semibold text-accent">MK{Number(order.totalAmount).toLocaleString()}</p>
+                      <p className="font-semibold text-accent">
+                        MK{Number(order.totalAmount).toLocaleString()}
+                      </p>
                     </div>
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadgeColor(order.status)}`}>
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadgeColor(order.status)}`}
+                    >
                       {getStatusLabel(order.status)}
                     </span>
                   </div>

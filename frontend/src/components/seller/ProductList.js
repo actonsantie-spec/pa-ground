@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Edit2, Trash2 } from 'lucide-react';
 import { fetchProducts, deleteProduct } from '../../api/products';
