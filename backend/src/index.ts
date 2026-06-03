@@ -4,7 +4,7 @@ dotenv.config();
 import app from './app.js';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { verifyJwt } from './utils/jwt.js';
+import { verifyToken } from './utils/jwt.js';
 import prisma from './prisma/client.js';
 
 const PORT = process.env.PORT || 4000;
@@ -15,7 +15,7 @@ io.use((socket, next) => {
   const token = socket.handshake.auth?.token;
   if (!token) return next(new Error('Authentication error'));
   try {
-    const payload = verifyJwt(token);
+const payload = verifyToken(token);
     socket.data.user = payload;
     return next();
   } catch (err) {
