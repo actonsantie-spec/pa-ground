@@ -8,21 +8,23 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
 
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
     if (currentUser && currentUser.role === 'buyer') {
       setBuyerProfile(currentUser);
     }
   }, []);
 
   const handleProfilePictureChange = (imageData) => {
-    if (buyerProfile) {
-      const updatedProfile = {
-        ...buyerProfile,
-        profilePicture: imageData
-      };
-      setBuyerProfile(updatedProfile);
-      localStorage.setItem('currentUser', JSON.stringify(updatedProfile));
-      localStorage.setItem(`buyer_${updatedProfile.email}`, JSON.stringify(updatedProfile));
-    }
+    if (!buyerProfile) return;
+
+    const updatedProfile = {
+      ...buyerProfile,
+      profilePicture: imageData,
+    };
+
+    setBuyerProfile(updatedProfile);
+    localStorage.setItem('currentUser', JSON.stringify(updatedProfile));
+    localStorage.setItem(`buyer_${updatedProfile.email}`, JSON.stringify(updatedProfile));
   };
 
   const handleLogout = () => {
@@ -52,37 +54,40 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
         <div className="flex items-start justify-between gap-6">
 
           {/* Profile Picture */}
-          <div className="flex-shrink-0">
-            <div className="w-24 h-24 rounded-lg bg-white bg-opacity-20 flex items-center justify-center overflow-hidden border-2 border-white border-opacity-30">
-              {buyerProfile.profilePicture ? (
-                <img
-                  src={buyerProfile.profilePicture}
-                  alt={buyerProfile.fullName}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <User size={48} className="text-white opacity-60" />
-              )}
-            </div>
+          <div className="w-24 h-24 rounded-lg bg-white bg-opacity-20 flex items-center justify-center overflow-hidden border-2 border-white border-opacity-30">
+            {buyerProfile.profilePicture ? (
+              <img
+                src={buyerProfile.profilePicture}
+                alt={buyerProfile.fullName || 'Buyer'}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <User size={48} className="text-white opacity-60" />
+            )}
           </div>
 
           {/* Profile Info */}
           <div className="flex-1">
-            <h2 className="text-2xl font-bold">{buyerProfile.fullName}</h2>
+            <h2 className="text-2xl font-bold">
+              {buyerProfile.fullName || 'Buyer'}
+            </h2>
             <p className="text-white text-opacity-90">{buyerProfile.email}</p>
             <p className="text-white text-opacity-80 text-sm mt-1">
               📞 {buyerProfile.phone || 'Not provided'}
             </p>
-            <div className="mt-3 text-sm text-white text-opacity-90">
-              <p>Member since {new Date(buyerProfile.registeredAt).toLocaleDateString()}</p>
-            </div>
+            <p className="mt-3 text-sm text-white text-opacity-90">
+              Member since{' '}
+              {buyerProfile.registeredAt
+                ? new Date(buyerProfile.registeredAt).toLocaleDateString()
+                : 'N/A'}
+            </p>
           </div>
 
-          {/* Action Buttons */}
+          {/* Actions */}
           <div className="flex flex-col gap-2">
             <button
               onClick={() => setIsEditingProfile(!isEditingProfile)}
-              className="bg-white text-secondary hover:bg-gray-100 px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2"
+              className="bg-white text-secondary hover:bg-gray-100 px-4 py-2 rounded-lg font-semibold flex items-center gap-2"
             >
               <Edit2 size={18} />
               {isEditingProfile ? 'Done' : 'Edit'}
@@ -90,7 +95,7 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
 
             <button
               onClick={handleLogout}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2"
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2"
             >
               <LogOut size={18} />
               Logout
@@ -108,42 +113,27 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
               <ProfilePictureUpload
                 onImageChange={handleProfilePictureChange}
                 currentImage={buyerProfile.profilePicture}
-                label="Your Profile Picture"
+                label="Profile Picture"
               />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-white mb-2">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    defaultValue={buyerProfile.fullName}
-                    className="w-full border border-white border-opacity-30 rounded-lg px-4 py-2 bg-white bg-opacity-10 text-white"
-                  />
-                </div>
+                <input
+                  type="text"
+                  defaultValue={buyerProfile.fullName}
+                  className="px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white border border-white border-opacity-30"
+                />
 
-                <div>
-                  <label className="block text-sm font-semibold text-white mb-2">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    defaultValue={buyerProfile.email}
-                    className="w-full border border-white border-opacity-30 rounded-lg px-4 py-2 bg-white bg-opacity-10 text-white"
-                  />
-                </div>
+                <input
+                  type="email"
+                  defaultValue={buyerProfile.email}
+                  className="px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white border border-white border-opacity-30"
+                />
 
-                <div>
-                  <label className="block text-sm font-semibold text-white mb-2">
-                    Phone
-                  </label>
-                  <input
-                    type="tel"
-                    defaultValue={buyerProfile.phone}
-                    className="w-full border border-white border-opacity-30 rounded-lg px-4 py-2 bg-white bg-opacity-10 text-white"
-                  />
-                </div>
+                <input
+                  type="tel"
+                  defaultValue={buyerProfile.phone}
+                  className="px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white border border-white border-opacity-30"
+                />
               </div>
 
               <button className="bg-white text-secondary hover:bg-gray-100 px-4 py-2 rounded-lg font-semibold">
@@ -156,7 +146,9 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
 
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">My Shopping Dashboard</h1>
+        <h1 className="text-3xl font-bold text-gray-900">
+          My Shopping Dashboard
+        </h1>
         <p className="text-gray-600 mt-1">
           Track your orders and manage your account
         </p>
@@ -169,13 +161,15 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
           return (
             <div key={idx} className="bg-white rounded-lg shadow-md p-6">
               <p className="text-sm text-gray-600">{stat.label}</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{stat.value}</p>
+              <p className="text-3xl font-bold text-gray-900 mt-2">
+                {stat.value}
+              </p>
             </div>
           );
         })}
       </div>
 
-      {/* Quick Actions */}
+      {/* Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <a href="/search" className="bg-accent text-white rounded-lg p-6">
           Continue Shopping

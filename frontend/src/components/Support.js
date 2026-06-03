@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, MessageSquare, Phone, Clock } from 'lucide-react';
+import { Mail, Phone, Clock } from 'lucide-react';
 
 export default function Support() {
   const [formData, setFormData] = useState({
