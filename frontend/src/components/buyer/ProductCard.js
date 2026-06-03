@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, Heart, Edit2, User, LogOut } from 'lucide-react';
+import { Edit2, User, LogOut } from 'lucide-react';
 import ProfilePictureUpload from '../ProfilePictureUpload';
 
 const BuyerDashboard = ({ onLogout = () => {} }) => {
@@ -27,7 +27,12 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
     };
 
     setBuyerProfile(updatedProfile);
-    localStorage.setItem('currentUser', JSON.stringify(updatedProfile));
+
+    localStorage.setItem(
+      'currentUser',
+      JSON.stringify(updatedProfile)
+    );
+
     localStorage.setItem(
       `buyer_${updatedProfile.email}`,
       JSON.stringify(updatedProfile)
@@ -48,18 +53,16 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
   }
 
   const stats = [
-    { label: 'Active Orders', value: '2', icon: ShoppingBag, color: 'text-blue-600' },
-    { label: 'Wishlist Items', value: '8', icon: Heart, color: 'text-red-600' },
-    { label: 'Past Orders', value: '15', icon: ShoppingBag, color: 'text-green-600' },
+    { label: 'Active Orders', value: '2' },
+    { label: 'Wishlist Items', value: '8' },
+    { label: 'Past Orders', value: '15' },
   ];
 
   return (
     <div className="space-y-6">
-
       {/* Profile Section */}
       <div className="bg-gradient-to-r from-secondary to-secondary-light rounded-lg shadow-lg p-6 text-white">
         <div className="flex items-start justify-between gap-6">
-
           {/* Profile Picture */}
           <div className="flex-shrink-0">
             <div className="w-24 h-24 rounded-lg bg-white bg-opacity-20 flex items-center justify-center overflow-hidden border-2 border-white border-opacity-30">
@@ -80,17 +83,22 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
             <h2 className="text-2xl font-bold">
               {buyerProfile.fullName || 'Buyer'}
             </h2>
+
             <p className="text-white text-opacity-90">
               {buyerProfile.email}
             </p>
+
             <p className="text-white text-opacity-80 text-sm mt-1">
               📞 {buyerProfile.phone || 'Not provided'}
             </p>
+
             <div className="mt-3 text-sm text-white text-opacity-90">
               <p>
                 Member since{' '}
                 {buyerProfile.registeredAt
-                  ? new Date(buyerProfile.registeredAt).toLocaleDateString()
+                  ? new Date(
+                      buyerProfile.registeredAt
+                    ).toLocaleDateString()
                   : 'N/A'}
               </p>
             </div>
@@ -99,7 +107,9 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
           {/* Action Buttons */}
           <div className="flex flex-col gap-2">
             <button
-              onClick={() => setIsEditingProfile(!isEditingProfile)}
+              onClick={() =>
+                setIsEditingProfile(!isEditingProfile)
+              }
               className="bg-white text-secondary hover:bg-gray-100 px-4 py-2 rounded-lg font-semibold flex items-center gap-2"
             >
               <Edit2 size={18} />
@@ -120,8 +130,9 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
         {isEditingProfile && (
           <div className="mt-6 border-t border-white border-opacity-30 pt-6">
             <div className="bg-white bg-opacity-10 rounded-lg p-4 space-y-4">
-
-              <h3 className="font-bold mb-4">Update Your Profile</h3>
+              <h3 className="font-bold mb-4">
+                Update Your Profile
+              </h3>
 
               <ProfilePictureUpload
                 onImageChange={handleProfilePictureChange}
@@ -165,6 +176,7 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
         <h1 className="text-3xl font-bold text-gray-900">
           My Shopping Dashboard
         </h1>
+
         <p className="text-gray-600 mt-1">
           Track your orders and manage your account
         </p>
@@ -172,27 +184,35 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {stats.map((stat, idx) => {
-          const Icon = stat.icon;
-          <Icon size={20} />
-          return (
-            <div key={idx} className="bg-white rounded-lg shadow-md p-6">
-              <p className="text-sm text-gray-600">{stat.label}</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">
-                {stat.value}
-              </p>
-            </div>
-          );
-        })}
+        {stats.map((stat, idx) => (
+          <div
+            key={idx}
+            className="bg-white rounded-lg shadow-md p-6"
+          >
+            <p className="text-sm text-gray-600">
+              {stat.label}
+            </p>
+
+            <p className="text-3xl font-bold text-gray-900 mt-2">
+              {stat.value}
+            </p>
+          </div>
+        ))}
       </div>
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <a href="/search" className="bg-accent text-white rounded-lg p-6">
+        <a
+          href="/search"
+          className="bg-accent text-white rounded-lg p-6"
+        >
           Continue Shopping
         </a>
 
-        <a href="/orders" className="bg-blue-600 text-white rounded-lg p-6">
+        <a
+          href="/orders"
+          className="bg-blue-600 text-white rounded-lg p-6"
+        >
           Track Orders
         </a>
       </div>

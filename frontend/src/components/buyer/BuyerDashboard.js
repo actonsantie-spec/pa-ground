@@ -23,8 +23,16 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
     };
 
     setBuyerProfile(updatedProfile);
-    localStorage.setItem('currentUser', JSON.stringify(updatedProfile));
-    localStorage.setItem(`buyer_${updatedProfile.email}`, JSON.stringify(updatedProfile));
+
+    localStorage.setItem(
+      'currentUser',
+      JSON.stringify(updatedProfile)
+    );
+
+    localStorage.setItem(
+      `buyer_${updatedProfile.email}`,
+      JSON.stringify(updatedProfile)
+    );
   };
 
   const handleLogout = () => {
@@ -41,9 +49,24 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
   }
 
   const stats = [
-    { label: 'Active Orders', value: '2', icon: ShoppingBag, color: 'text-blue-600' },
-    { label: 'Wishlist Items', value: '8', icon: Heart, color: 'text-red-600' },
-    { label: 'Past Orders', value: '15', icon: ShoppingBag, color: 'text-green-600' },
+    {
+      label: 'Active Orders',
+      value: '2',
+      icon: ShoppingBag,
+      color: 'text-blue-600',
+    },
+    {
+      label: 'Wishlist Items',
+      value: '8',
+      icon: Heart,
+      color: 'text-red-600',
+    },
+    {
+      label: 'Past Orders',
+      value: '15',
+      icon: ShoppingBag,
+      color: 'text-green-600',
+    },
   ];
 
   return (
@@ -51,7 +74,7 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
 
       {/* Profile Section */}
       <div className="bg-gradient-to-r from-secondary to-secondary-light rounded-lg shadow-lg p-6 text-white">
-        <div className="flex items-start justify-between gap-6">
+        <div className="flex flex-col md:flex-row items-start justify-between gap-6">
 
           {/* Profile Picture */}
           <div className="w-24 h-24 rounded-lg bg-white bg-opacity-20 flex items-center justify-center overflow-hidden border-2 border-white border-opacity-30">
@@ -66,28 +89,37 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
             )}
           </div>
 
-          {/* Profile Info */}
+          {/* Profile Information */}
           <div className="flex-1">
             <h2 className="text-2xl font-bold">
               {buyerProfile.fullName || 'Buyer'}
             </h2>
-            <p className="text-white text-opacity-90">{buyerProfile.email}</p>
+
+            <p className="text-white text-opacity-90">
+              {buyerProfile.email}
+            </p>
+
             <p className="text-white text-opacity-80 text-sm mt-1">
               📞 {buyerProfile.phone || 'Not provided'}
             </p>
+
             <p className="mt-3 text-sm text-white text-opacity-90">
               Member since{' '}
               {buyerProfile.registeredAt
-                ? new Date(buyerProfile.registeredAt).toLocaleDateString()
+                ? new Date(
+                    buyerProfile.registeredAt
+                  ).toLocaleDateString()
                 : 'N/A'}
             </p>
           </div>
 
-          {/* Actions */}
+          {/* Action Buttons */}
           <div className="flex flex-col gap-2">
             <button
-              onClick={() => setIsEditingProfile(!isEditingProfile)}
-              className="bg-white text-secondary hover:bg-gray-100 px-4 py-2 rounded-lg font-semibold flex items-center gap-2"
+              onClick={() =>
+                setIsEditingProfile(!isEditingProfile)
+              }
+              className="bg-white text-secondary hover:bg-gray-100 px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
             >
               <Edit2 size={18} />
               {isEditingProfile ? 'Done' : 'Edit'}
@@ -95,7 +127,7 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
 
             <button
               onClick={handleLogout}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2"
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
             >
               <LogOut size={18} />
               Logout
@@ -103,12 +135,14 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
           </div>
         </div>
 
-        {/* Edit Section */}
+        {/* Edit Profile Section */}
         {isEditingProfile && (
           <div className="mt-6 border-t border-white border-opacity-30 pt-6">
             <div className="bg-white bg-opacity-10 rounded-lg p-4 space-y-4">
 
-              <h3 className="font-bold mb-4">Update Your Profile</h3>
+              <h3 className="font-bold text-lg">
+                Update Your Profile
+              </h3>
 
               <ProfilePictureUpload
                 onImageChange={handleProfilePictureChange}
@@ -117,26 +151,30 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
               />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
                 <input
                   type="text"
                   defaultValue={buyerProfile.fullName}
+                  placeholder="Full Name"
                   className="px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white border border-white border-opacity-30"
                 />
 
                 <input
                   type="email"
                   defaultValue={buyerProfile.email}
+                  placeholder="Email Address"
                   className="px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white border border-white border-opacity-30"
                 />
 
                 <input
                   type="tel"
                   defaultValue={buyerProfile.phone}
+                  placeholder="Phone Number"
                   className="px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white border border-white border-opacity-30"
                 />
               </div>
 
-              <button className="bg-white text-secondary hover:bg-gray-100 px-4 py-2 rounded-lg font-semibold">
+              <button className="bg-white text-secondary hover:bg-gray-100 px-4 py-2 rounded-lg font-semibold transition-colors">
                 Save Changes
               </button>
             </div>
@@ -144,43 +182,66 @@ const BuyerDashboard = ({ onLogout = () => {} }) => {
         )}
       </div>
 
-      {/* Header */}
+      {/* Dashboard Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">
           My Shopping Dashboard
         </h1>
+
         <p className="text-gray-600 mt-1">
           Track your orders and manage your account
         </p>
       </div>
 
-      {/* Stats */}
+      {/* Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {stats.map((stat, idx) => {
           const Icon = stat.icon;
+
           return (
-            <div key={idx} className="bg-white rounded-lg shadow-md p-6">
-              <p className="text-sm text-gray-600">{stat.label}</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">
-                {stat.value}
-              </p>
+            <div
+              key={idx}
+              className="bg-white rounded-lg shadow-md p-6"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">
+                    {stat.label}
+                  </p>
+
+                  <p className="text-3xl font-bold text-gray-900 mt-2">
+                    {stat.value}
+                  </p>
+                </div>
+
+                <Icon
+                  size={30}
+                  className={stat.color}
+                />
+              </div>
             </div>
           );
         })}
       </div>
 
-      {/* Actions */}
+      {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <a href="/search" className="bg-accent text-white rounded-lg p-6">
+        <a
+          href="/search"
+          className="bg-accent text-white rounded-lg p-6 font-semibold hover:opacity-90 transition"
+        >
           Continue Shopping
         </a>
 
-        <a href="/orders" className="bg-blue-600 text-white rounded-lg p-6">
+        <a
+          href="/orders"
+          className="bg-blue-600 text-white rounded-lg p-6 font-semibold hover:bg-blue-700 transition"
+        >
           Track Orders
         </a>
       </div>
 
-      {/* Activity */}
+      {/* Activity Section */}
       <div className="bg-white rounded-lg shadow-md p-6 text-center text-gray-600">
         No recent activity yet.
       </div>
