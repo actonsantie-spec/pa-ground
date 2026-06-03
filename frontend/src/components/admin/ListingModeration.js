@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Trash2, Eye, Flag, CheckCircle, Clock } from 'lucide-react';
+import { Trash2, Eye, Flag, CheckCircle } from 'lucide-react';
 
 const ListingModeration = () => {
     const [listings, setListings] = useState([

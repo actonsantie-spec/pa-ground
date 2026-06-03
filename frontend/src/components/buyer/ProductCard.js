@@ -1,104 +1,207 @@
-import React, { useState } from 'react';
-import { Star, Heart, MapPin, MessageCircle } from 'lucide-react';
-import WhatsAppButton from '../WhatsAppButton';
+import React, { useState, useEffect } from 'react';
+import { ShoppingBag, Heart, Edit2, User, LogOut } from 'lucide-react';
+import ProfilePictureUpload from '../ProfilePictureUpload';
 
-const ProductCard = ({ product = {}, onAddToCart = () => {}, onViewDetails = () => {} }) => {
-    const [isFavorite, setIsFavorite] = useState(false);
+const BuyerDashboard = ({ onLogout = () => {} }) => {
+  const [buyerProfile, setBuyerProfile] = useState(null);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
 
-    const {
-        id = 1,
-        name = 'Product Name',
-        price = 0,
-        image = 'https://via.placeholder.com/200',
-        condition = 'New',
-        seller = 'Seller Name',
-        location = 'Lilongwe',
-        rating = 4.5,
-        reviews = 23,
-        inStock = true,
-    } = product;
+  useEffect(() => {
+    try {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
+      if (currentUser && currentUser.role === 'buyer') {
+        setBuyerProfile(currentUser);
+      }
+    } catch (err) {
+      console.error('Failed to load user:', err);
+    }
+  }, []);
+
+  const handleProfilePictureChange = (imageData) => {
+    if (!buyerProfile) return;
+
+    const updatedProfile = {
+      ...buyerProfile,
+      profilePicture: imageData,
+    };
+
+    setBuyerProfile(updatedProfile);
+    localStorage.setItem('currentUser', JSON.stringify(updatedProfile));
+    localStorage.setItem(
+      `buyer_${updatedProfile.email}`,
+      JSON.stringify(updatedProfile)
+    );
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('currentUser');
+    onLogout();
+  };
+
+  if (!buyerProfile) {
     return (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200">
-            {/* Image Container */}
-            <div className="relative pb-full bg-gray-100 overflow-hidden h-48">
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-gray-600">Loading profile...</p>
+      </div>
+    );
+  }
+
+  const stats = [
+    { label: 'Active Orders', value: '2', icon: ShoppingBag, color: 'text-blue-600' },
+    { label: 'Wishlist Items', value: '8', icon: Heart, color: 'text-red-600' },
+    { label: 'Past Orders', value: '15', icon: ShoppingBag, color: 'text-green-600' },
+  ];
+
+  return (
+    <div className="space-y-6">
+
+      {/* Profile Section */}
+      <div className="bg-gradient-to-r from-secondary to-secondary-light rounded-lg shadow-lg p-6 text-white">
+        <div className="flex items-start justify-between gap-6">
+
+          {/* Profile Picture */}
+          <div className="flex-shrink-0">
+            <div className="w-24 h-24 rounded-lg bg-white bg-opacity-20 flex items-center justify-center overflow-hidden border-2 border-white border-opacity-30">
+              {buyerProfile.profilePicture ? (
                 <img
-                    src={image}
-                    alt={name}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
-                    onClick={() => onViewDetails(id)}
+                  src={buyerProfile.profilePicture}
+                  alt={buyerProfile.fullName || 'Profile'}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <User size={48} className="text-white opacity-60" />
+              )}
+            </div>
+          </div>
+
+          {/* Profile Info */}
+          <div className="flex-1">
+            <h2 className="text-2xl font-bold">
+              {buyerProfile.fullName || 'Buyer'}
+            </h2>
+            <p className="text-white text-opacity-90">
+              {buyerProfile.email}
+            </p>
+            <p className="text-white text-opacity-80 text-sm mt-1">
+              📞 {buyerProfile.phone || 'Not provided'}
+            </p>
+            <div className="mt-3 text-sm text-white text-opacity-90">
+              <p>
+                Member since{' '}
+                {buyerProfile.registeredAt
+                  ? new Date(buyerProfile.registeredAt).toLocaleDateString()
+                  : 'N/A'}
+              </p>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={() => setIsEditingProfile(!isEditingProfile)}
+              className="bg-white text-secondary hover:bg-gray-100 px-4 py-2 rounded-lg font-semibold flex items-center gap-2"
+            >
+              <Edit2 size={18} />
+              {isEditingProfile ? 'Done' : 'Edit'}
+            </button>
+
+            <button
+              onClick={handleLogout}
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2"
+            >
+              <LogOut size={18} />
+              Logout
+            </button>
+          </div>
+        </div>
+
+        {/* Edit Section */}
+        {isEditingProfile && (
+          <div className="mt-6 border-t border-white border-opacity-30 pt-6">
+            <div className="bg-white bg-opacity-10 rounded-lg p-4 space-y-4">
+
+              <h3 className="font-bold mb-4">Update Your Profile</h3>
+
+              <ProfilePictureUpload
+                onImageChange={handleProfilePictureChange}
+                currentImage={buyerProfile.profilePicture}
+                label="Profile Picture"
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  defaultValue={buyerProfile.fullName}
+                  placeholder="Full Name"
+                  className="w-full px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white border border-white border-opacity-30"
                 />
 
-                {/* Condition Badge */}
-                <div className="absolute top-2 left-2 bg-accent text-white px-3 py-1 rounded-full text-xs font-bold">
-                    {condition}
-                </div>
+                <input
+                  type="email"
+                  defaultValue={buyerProfile.email}
+                  placeholder="Email"
+                  className="w-full px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white border border-white border-opacity-30"
+                />
 
-                {/* Favorite Button */}
-                <button
-                    onClick={() => setIsFavorite(!isFavorite)}
-                    className="absolute top-2 right-2 bg-white rounded-full p-2 hover:bg-gray-100 transition-colors"
-                >
-                    <Heart size={20} fill={isFavorite ? '#ef4444' : 'none'} color={isFavorite ? '#ef4444' : '#999'} />
-                </button>
+                <input
+                  type="tel"
+                  defaultValue={buyerProfile.phone}
+                  placeholder="Phone"
+                  className="w-full px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white border border-white border-opacity-30"
+                />
+              </div>
 
-                {/* Stock Status */}
-                {!inStock && (
-                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                        <span className="text-white font-bold">Out of Stock</span>
-                    </div>
-                )}
+              <button className="bg-white text-secondary hover:bg-gray-100 px-4 py-2 rounded-lg font-semibold">
+                Save Changes
+              </button>
             </div>
+          </div>
+        )}
+      </div>
 
-            {/* Content */}
-            <div className="p-4 space-y-3">
-                {/* Product Name */}
-                <h3
-                    className="font-bold text-secondary line-clamp-2 cursor-pointer hover:text-accent transition-colors"
-                    onClick={() => onViewDetails(id)}
-                >
-                    {name}
-                </h3>
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">
+          My Shopping Dashboard
+        </h1>
+        <p className="text-gray-600 mt-1">
+          Track your orders and manage your account
+        </p>
+      </div>
 
-                {/* Price */}
-                <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold text-accent">MK{price.toLocaleString()}</span>
-                </div>
-
-                {/* Rating */}
-                <div className="flex items-center gap-1">
-                    <div className="flex gap-0.5">
-                        {[...Array(5)].map((_, i) => (
-                            <Star
-                                key={i}
-                                size={14}
-                                fill={i < Math.floor(rating) ? '#fbbf24' : '#e5e7eb'}
-                                color={i < Math.floor(rating) ? '#fbbf24' : '#e5e7eb'}
-                            />
-                        ))}
-                    </div>
-                    <span className="text-xs text-gray-600">({reviews})</span>
-                </div>
-
-                {/* Seller & Location */}
-                <div className="space-y-1 border-t border-gray-200 pt-2">
-                    <p className="text-sm font-semibold text-secondary">{seller}</p>
-                    <p className="text-xs text-gray-600 flex items-center gap-1">
-                        <MapPin size={14} /> {location}
-                    </p>
-                </div>
-
-                {/* Add to Cart Button */}
-                <button
-                    onClick={() => onAddToCart(id)}
-                    disabled={!inStock}
-                    className="w-full bg-accent hover:bg-accent-dark text-white font-semibold py-2 rounded-lg transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
-                >
-                    {inStock ? 'Add to Cart' : 'Unavailable'}
-                </button>
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {stats.map((stat, idx) => {
+          const Icon = stat.icon;
+          return (
+            <div key={idx} className="bg-white rounded-lg shadow-md p-6">
+              <p className="text-sm text-gray-600">{stat.label}</p>
+              <p className="text-3xl font-bold text-gray-900 mt-2">
+                {stat.value}
+              </p>
             </div>
-        </div>
-    );
+          );
+        })}
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <a href="/search" className="bg-accent text-white rounded-lg p-6">
+          Continue Shopping
+        </a>
+
+        <a href="/orders" className="bg-blue-600 text-white rounded-lg p-6">
+          Track Orders
+        </a>
+      </div>
+
+      {/* Activity */}
+      <div className="bg-white rounded-lg shadow-md p-6 text-center text-gray-600">
+        No recent activity yet.
+      </div>
+    </div>
+  );
 };
 
-export default ProductCard;
+export default BuyerDashboard;

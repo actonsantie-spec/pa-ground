@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
- import { Facebook, Twitter, Instagram, Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
+ import { Facebook, Twitter, Instagram, MessageCircle } from 'lucide-react';
 
 const SOCIAL_LINKS = [
     { icon: Facebook, label: 'Facebook', url: '#facebook' },
