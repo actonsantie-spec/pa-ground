@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-// simple in-memory storage (replace with DB later if needed)
+// simple in-memory notifications store
 let notifications: any[] = [];
 
 // CREATE notification

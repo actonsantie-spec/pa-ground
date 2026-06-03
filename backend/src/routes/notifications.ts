@@ -1,9 +1,14 @@
 import { Router } from 'express';
-import { sendWhatsApp } from '../controllers/notificationController.js';
-import { authenticate } from '../middleware/auth.js';
+import {
+  createNotification,
+  getNotifications,
+  markAsRead,
+} from '../controllers/notificationController.js';
 
 const router = Router();
 
-router.post('/whatsapp', authenticate, sendWhatsApp);
+router.post('/', createNotification);
+router.get('/', getNotifications);
+router.patch('/:id/read', markAsRead);
 
 export default router;
