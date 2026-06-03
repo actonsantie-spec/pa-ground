@@ -7,17 +7,17 @@ import { authenticate } from '../middleware/auth.js';
 
 const uploadDir = join(process.cwd(), 'uploads');
 
-// Ensure uploads folder exists
+// ensure folder exists
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Multer storage config
+// multer storage
 const storage = multer.diskStorage({
-  destination: (_req: Request, _file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
+  destination: (_req, _file, cb) => {
     cb(null, uploadDir);
   },
-  filename: (_req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
+  filename: (_req, file, cb) => {
     cb(null, `${uuidv4()}-${file.originalname}`);
   },
 });
@@ -25,13 +25,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 const router = Router();
 
-// Upload profile picture
+// Upload route
 router.post(
   '/profile-picture',
   authenticate,
   upload.single('file'),
   (req: Request, res: Response) => {
-    const file = req.file as Express.Multer.File | undefined;
+    const file = req.file as any; // FIX: avoids TS Multer typing issues
 
     if (!file) {
       return res.status(400).json({ error: 'No file uploaded' });
